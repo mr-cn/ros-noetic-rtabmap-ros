@@ -3,7 +3,7 @@ pkgdesc="ROS - RTAB-Maps ros-pkg."
 url='http://www.ros.org/'
 
 pkgname='ros-noetic-rtabmap-ros'
-pkgver='0.20.0'
+pkgver='0.21.1'
 _pkgver_patch=1
 arch=('any')
 pkgrel=1
@@ -82,8 +82,14 @@ depends=(${ros_depends[@]})
 
 # Tarball version (faster download)
 _dir="rtabmap_ros-release-release-noetic-rtabmap_ros-${pkgver}-${_pkgver_patch}"
-source=("${pkgname}-${pkgver}-${_pkgver_patch}.tar.gz"::"https://github.com/introlab/rtabmap_ros-release/archive/release/noetic/rtabmap_ros/${pkgver}-${_pkgver_patch}.tar.gz")
-sha256sums=('fa20f2e9c75f65932f047ef92c26eddc72ec943490226c4083b2c4328b587ffb')
+source=(
+	"${pkgname}-${pkgver}-${_pkgver_patch}.tar.gz"::"https://github.com/introlab/rtabmap_ros-release/archive/release/noetic/rtabmap_ros/${pkgver}-${_pkgver_patch}.tar.gz"
+	fix-python-scripts.sh	
+)
+sha256sums=(
+	'9e151dbd9426cdb5fb5ce6df5c3af5134337453628265f34921f11f74672e6e9'
+	'5528486d640d91136276edda2075aefc06f360e6297e556051bae57b9479aeda'
+)
 
 build() {
   # Use ROS environment variables
@@ -95,7 +101,7 @@ build() {
   cd ${srcdir}/build
 
   # Fix Python2/Python3 conflicts
-  /usr/share/ros-build-tools/fix-python-scripts.sh -v 3 ${srcdir}/${_dir}
+  ${srcdir}/fix-python-scripts.sh -v 3 ${srcdir}/${_dir}
 
   # Build project
   cmake ${srcdir}/${_dir} \
