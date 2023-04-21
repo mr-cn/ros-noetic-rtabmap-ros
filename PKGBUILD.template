@@ -1,0 +1,123 @@
+# Maintainer : ehmish
+pkgdesc="ROS - RTAB-Maps ros-pkg's __TEMP_SUBPKG__ subpackage."
+url='http://www.ros.org/'
+
+pkgname='ros-__TEMP_ROSDISTRO__-rtabmap-__TEMP_SUBPKG__'
+pkgver='__TEMP_PKGVER__'
+_pkgver_patch=__TEMP_PKGVER_PATCH__
+arch=('any')
+pkgrel=1
+license=('BSD')
+
+ros_makedepends=(ros-__TEMP_ROSDISTRO__-genmsg
+  ros-__TEMP_ROSDISTRO__-class-loader
+  ros-__TEMP_ROSDISTRO__-rtabmap
+  ros-__TEMP_ROSDISTRO__-sensor-msgs
+  ros-__TEMP_ROSDISTRO__-catkin
+  ros-__TEMP_ROSDISTRO__-stereo-msgs
+  ros-__TEMP_ROSDISTRO__-visualization-msgs
+  ros-__TEMP_ROSDISTRO__-cv-bridge
+  ros-__TEMP_ROSDISTRO__-nodelet
+  ros-__TEMP_ROSDISTRO__-geometry-msgs
+  ros-__TEMP_ROSDISTRO__-std-msgs
+  ros-__TEMP_ROSDISTRO__-dynamic-reconfigure
+  ros-__TEMP_ROSDISTRO__-image-geometry
+  ros-__TEMP_ROSDISTRO__-std-srvs
+  ros-__TEMP_ROSDISTRO__-eigen-conversions
+  ros-__TEMP_ROSDISTRO__-nav-msgs
+  ros-__TEMP_ROSDISTRO__-tf
+  ros-__TEMP_ROSDISTRO__-rospy
+  ros-__TEMP_ROSDISTRO__-octomap-ros
+  ros-__TEMP_ROSDISTRO__-costmap-2d
+  ros-__TEMP_ROSDISTRO__-image-transport
+  ros-__TEMP_ROSDISTRO__-tf2-ros
+  ros-__TEMP_ROSDISTRO__-message-filters
+  ros-__TEMP_ROSDISTRO__-move-base-msgs
+  ros-__TEMP_ROSDISTRO__-pcl-ros
+  ros-__TEMP_ROSDISTRO__-roscpp
+  ros-__TEMP_ROSDISTRO__-pcl-conversions
+  ros-__TEMP_ROSDISTRO__-rviz
+  ros-__TEMP_ROSDISTRO__-tf-conversions
+  ros-__TEMP_ROSDISTRO__-laser-geometry)
+makedepends=('cmake' 'ros-build-tools'
+  ${ros_makedepends[@]}
+  pcl)
+
+ros_depends=(ros-__TEMP_ROSDISTRO__-class-loader
+  ros-__TEMP_ROSDISTRO__-rtabmap
+  ros-__TEMP_ROSDISTRO__-sensor-msgs
+  ros-__TEMP_ROSDISTRO__-stereo-msgs
+  ros-__TEMP_ROSDISTRO__-visualization-msgs
+  ros-__TEMP_ROSDISTRO__-cv-bridge
+  ros-__TEMP_ROSDISTRO__-nodelet
+  ros-__TEMP_ROSDISTRO__-geometry-msgs
+  ros-__TEMP_ROSDISTRO__-std-msgs
+  ros-__TEMP_ROSDISTRO__-dynamic-reconfigure
+  ros-__TEMP_ROSDISTRO__-image-geometry
+  ros-__TEMP_ROSDISTRO__-std-srvs
+  ros-__TEMP_ROSDISTRO__-eigen-conversions
+  ros-__TEMP_ROSDISTRO__-nav-msgs
+  ros-__TEMP_ROSDISTRO__-image-transport-plugins
+  ros-__TEMP_ROSDISTRO__-tf
+  ros-__TEMP_ROSDISTRO__-rospy
+  ros-__TEMP_ROSDISTRO__-octomap-ros
+  ros-__TEMP_ROSDISTRO__-costmap-2d
+  ros-__TEMP_ROSDISTRO__-image-transport
+  ros-__TEMP_ROSDISTRO__-tf2-ros
+  ros-__TEMP_ROSDISTRO__-message-filters
+  ros-__TEMP_ROSDISTRO__-move-base-msgs
+  ros-__TEMP_ROSDISTRO__-pcl-ros
+  ros-__TEMP_ROSDISTRO__-roscpp
+  ros-__TEMP_ROSDISTRO__-pcl-conversions
+  ros-__TEMP_ROSDISTRO__-rviz
+  ros-__TEMP_ROSDISTRO__-tf-conversions
+  ros-__TEMP_ROSDISTRO__-laser-geometry)
+depends=(
+  ${ros_depends[@]}
+  )
+
+# Git version (e.g. for debugging)
+# _tag=release/__TEMP_ROSDISTRO__/rtabmap_ros/${pkgver}-${_pkgver_patch}
+# _dir=${pkgname}
+# source=("${_dir}"::"git+https://github.com/introlab/rtabmap_ros-release.git"#tag=${_tag})
+# sha256sums=('SKIP')
+
+# Tarball version (faster download)
+_dir="rtabmap_ros-release-release-__TEMP_ROSDISTRO__-rtabmap___TEMP_SUBPKG__-${pkgver}-${_pkgver_patch}"
+source=(
+	"rtabmap___TEMP_SUBPKG__-${pkgver}-${_pkgver_patch}.tar.gz"::"https://github.com/introlab/rtabmap_ros-release/archive/release/__TEMP_ROSDISTRO__/rtabmap___TEMP_SUBPKG__/${pkgver}-${_pkgver_patch}.tar.gz"
+  fix-python-scripts.sh	
+)
+sha256sums=(
+  'SKIP'
+	'5528486d640d91136276edda2075aefc06f360e6297e556051bae57b9479aeda'
+)
+
+build() {
+  # Use ROS environment variables
+  source /usr/share/ros-build-tools/clear-ros-env.sh
+  [ -f /opt/ros/__TEMP_ROSDISTRO__/setup.bash ] && source /opt/ros/__TEMP_ROSDISTRO__/setup.bash
+
+  # Create build directory
+  [ -d ${srcdir}/build ] || mkdir ${srcdir}/build
+  cd ${srcdir}/build
+
+  # Fix Python2/Python3 conflicts
+  ${srcdir}/fix-python-scripts.sh -v 3 ${srcdir}/${_dir}
+
+  # Build project
+  cmake ${srcdir}/${_dir} \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCATKIN_BUILD_BINARY_PACKAGE=ON \
+        -DCMAKE_INSTALL_PREFIX=/opt/ros/__TEMP_ROSDISTRO__ \
+        -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+        -DPYTHON_LIBRARY=/usr/lib/libpython3.so \
+        -DSETUPTOOLS_DEB_LAYOUT=OFF
+  make
+
+}
+
+package() {
+  cd "${srcdir}/build"
+  make DESTDIR="${pkgdir}/" install
+}

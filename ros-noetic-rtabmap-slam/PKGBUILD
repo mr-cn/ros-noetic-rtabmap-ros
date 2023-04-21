@@ -1,10 +1,10 @@
 # Maintainer : ehmish
-pkgdesc="ROS - RTAB-Maps ros-pkg."
+pkgdesc="ROS - RTAB-Maps ros-pkg's slam subpackage."
 url='http://www.ros.org/'
 
-pkgname='ros-noetic-rtabmap-ros'
+pkgname='ros-noetic-rtabmap-slam'
 pkgver='0.21.1'
-_pkgver_patch=1
+_pkgver_patch=4
 arch=('any')
 pkgrel=1
 license=('BSD')
@@ -71,8 +71,17 @@ ros_depends=(ros-noetic-class-loader
   ros-noetic-pcl-conversions
   ros-noetic-rviz
   ros-noetic-tf-conversions
-  ros-noetic-laser-geometry)
-depends=(${ros_depends[@]})
+  ros-noetic-laser-geometry
+  ros-noetic-actionlib
+  ros-noetic-actionlib-msgs
+  ros-noetic-move-base-msgs
+  ros-noetic-pluginlib)
+depends=(
+  ${ros_depends[@]}
+  ros-noetic-rtabmap-msgs
+  ros-noetic-rtabmap-util
+  ros-noetic-rtabmap-sync
+  )
 
 # Git version (e.g. for debugging)
 # _tag=release/noetic/rtabmap_ros/${pkgver}-${_pkgver_patch}
@@ -81,13 +90,13 @@ depends=(${ros_depends[@]})
 # sha256sums=('SKIP')
 
 # Tarball version (faster download)
-_dir="rtabmap_ros-release-release-noetic-rtabmap_ros-${pkgver}-${_pkgver_patch}"
+_dir="rtabmap_ros-release-release-noetic-rtabmap_slam-${pkgver}-${_pkgver_patch}"
 source=(
-	"${pkgname}-${pkgver}-${_pkgver_patch}.tar.gz"::"https://github.com/introlab/rtabmap_ros-release/archive/release/noetic/rtabmap_ros/${pkgver}-${_pkgver_patch}.tar.gz"
-	fix-python-scripts.sh	
+	"rtabmap_slam-${pkgver}-${_pkgver_patch}.tar.gz"::"https://github.com/introlab/rtabmap_ros-release/archive/release/noetic/rtabmap_slam/${pkgver}-${_pkgver_patch}.tar.gz"
+  fix-python-scripts.sh	
 )
 sha256sums=(
-	'9e151dbd9426cdb5fb5ce6df5c3af5134337453628265f34921f11f74672e6e9'
+  'SKIP'
 	'5528486d640d91136276edda2075aefc06f360e6297e556051bae57b9479aeda'
 )
 
